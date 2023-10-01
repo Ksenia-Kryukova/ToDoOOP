@@ -1,0 +1,4 @@
+data/*.json
+data/*.csv
+.vscode
+__pycache__
