@@ -4,7 +4,10 @@ from .tasks import Task
 class TodoList:
     def __init__(self, list_name) -> None:
         self.name = list_name
-        self.tasks: list = []
-    
+        self._tasks: list = []
+
     def add_task(self, task: Task):
-        self.tasks.append(task)
+        self._tasks.append(task)
+
+    def tasks(self):
+        return self._tasks
