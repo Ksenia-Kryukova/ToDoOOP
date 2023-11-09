@@ -9,10 +9,10 @@ from .savers import JsonSaver
 def main():
     args = args_parser()
 
-    if args.create:                                               #  РАБОТАЕТ
+    if args.create:
         saver = JsonSaver(args.create)
         saver.save_list(saver.create_new_list())
-    elif args.list:                                              #  РАБОТАЕТ
+    elif args.list:
         loader = JsonLoader(args.list)
         todo_list = TodoList(loader.load())
         todo_list.get_list()
@@ -25,8 +25,8 @@ def main():
             todo_list.del_task(args.delete)
         elif args.change_task:
             new_task = Task(args.change_task, args.new_task)
-            new_task.change_task(todo_list)
-        save_list = JsonSaver(args.change_list)                   # TypeError: Object of type TodoList is not JSON serializable + стирает данные
+            new_task.change_task(todo_list.todo_list())
+        save_list = JsonSaver(args.change_list)
         save_list.save_list(todo_list.todo_list())
     elif args.all_lists:                                          #  сделать, чтобы не ожидался аргумент на входе + заменить путь
         all_files = os.listdir('/home/kryukova/ToDoOOP/')
