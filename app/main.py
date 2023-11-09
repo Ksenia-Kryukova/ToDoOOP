@@ -28,10 +28,17 @@ def main():
             new_task.change_task(todo_list.todo_list())
         save_list = JsonSaver(args.change_list)
         save_list.save_list(todo_list.todo_list())
-    elif args.all_lists:                                          #  сделать, чтобы не ожидался аргумент на входе + заменить путь
-        all_files = os.listdir('/home/kryukova/ToDoOOP/')
-        files = [f for f in all_files if f.endswith('json') or f.endswith('csv')]
+    elif args.all_lists:
+        all_files = os.listdir(os.getcwd())
+        files = [f for f in all_files if f.endswith(args.all_lists.lower())]
         for file in files:
             print(file)
-
-    # elif args.delete_list:
+    elif args.delete_list:
+        file_path = os.path.join(os.getcwd(), args.delete_list)
+        try:
+            os.remove(file_path)
+            print(f"Файл '{args.delete_list}' удален успешно.")
+        except FileNotFoundError:
+            print(f"Файл '{args.delete_list}' не найден.")
+        except Exception as e:
+            print(f"Произошла ошибка при удалении файла: {e}")
