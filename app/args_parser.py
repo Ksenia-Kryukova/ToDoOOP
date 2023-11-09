@@ -1,5 +1,5 @@
 import argparse
-from app.constants import GREETINGS
+from .constants import GREETINGS
 
 
 def args_parser():

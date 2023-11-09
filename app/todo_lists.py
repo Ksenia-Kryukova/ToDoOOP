@@ -1,4 +1,4 @@
-from app.tasks import Task
+from .tasks import Task
 from app import constants
 
 
