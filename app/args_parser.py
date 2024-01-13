@@ -10,8 +10,12 @@ def args_parser():
                         help='Вывести все списки')
     parser.add_argument('-dl', '--delete_list',
                         help='Удалить список')
-    parser.add_argument('-c', '--create',
+    parser.add_argument('-cl', '--create_list',
                         help='Создать новый список с указанным названием')
+    parser.add_argument('-j', '--JSON',
+                        help='Формат JSON')
+    parser.add_argument('-c', '--CSV',
+                        help='Формат CSV')
     parser.add_argument('-l', '--list',
                         help='Вывести все задачи указанного списка')
     parser.add_argument('-chl', '--change_list',
@@ -22,7 +26,7 @@ def args_parser():
                         help='Удалить задачу по указанному номеру')
     parser.add_argument('-cht', '--change_task', type=int,
                         help='Изменить задачу по указанному номеру на новую')
-    parser.add_argument('-nt', '--new_task',
+    parser.add_argument('-n', '--new_task',
                         help='Текст измененной задачи')
 
     return parser.parse_args()
