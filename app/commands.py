@@ -44,6 +44,7 @@ class ListCommand(Command):
         todo_list = TodoList(loader.load())
         return todo_list.get_list()
 
+
 # чтобы добавить новую команду, нужно создать класс с методом def execute(self) -> CommandResult и добавить его вызов в create_command
 def create_command(args) -> Command:
     if args.create:
@@ -53,14 +54,14 @@ def create_command(args) -> Command:
     # и т.д. Здесь у нас всё же останется портянка if-ов, от них нам никуда не деться. Но она будет 1) изолирована в одной функции 2) очень простая, т.к. будет просто возвращать объект нужного класса
 
 
-#
+'''
  if args.create_list:
         if args.json:
             saver = JsonSaver(args.create_list)
         else:
             saver = CsvSaver(args.create_list)
         saver.save_list(saver.create_new_list())
-    #
+    
     while True:
             task = input(constants.INPUT_TASK)
             todo_list.append(task)
@@ -71,8 +72,8 @@ def create_command(args) -> Command:
 
     elif args.list:
     
-    # j,thyenm pfuhepre d nhq-trcctgn
-    # try:
+    
+    try:
             with open(self.list_name, 'r', encoding='utf-8') as file:
                 todo_list = json.load(file)
             return todo_list
@@ -101,7 +102,7 @@ def create_command(args) -> Command:
         todo_list = TodoList(loader.load())
         if args.add:
             todo_list.add_task(args.add)
-    #
+    
     elif args.delete:
             try:
             del self.my_list[num - 1]
@@ -118,7 +119,6 @@ def create_command(args) -> Command:
         save_list = JsonSaver(args.change_list)
         save_list.save_list(todo_list.todo_list())
     
-    #
     try:
             todo_list[self.num - 1] = self.task
         except IndexError:
@@ -138,3 +138,4 @@ def create_command(args) -> Command:
             print(f"Файл '{args.delete_list}' не найден.")
         except Exception as e:
             print(f"Произошла ошибка при удалении файла: {e}")
+'''
