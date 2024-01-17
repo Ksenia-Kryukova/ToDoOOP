@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from .todo_lists import TodoList
-import os
 from .tasks import Task
-from .loaders import JsonLoader, CsvLoader
-from .savers import JsonSaver, CsvSaver
+from .loaders import create_loader
+from .savers import create_saver
+import .constants
+import os
 
 
 class CommandResult:
@@ -11,14 +12,11 @@ class CommandResult:
     def __init__(self, message: str) -> None:
         self._message = message
 
-    def message(self) -> str:
-        return self._message
-
     def __str__(self) -> str:
         return self._message
 
 
-class Command(ABC):  # абстрактный класс команды
+class Command(ABC):
 
     def __init__(self, args) -> None:
         self.args = args
@@ -28,64 +26,88 @@ class Command(ABC):  # абстрактный класс команды
         pass
 
 
-class CreateCommand(Command):    # класс конкретной команды
+class CreateCommand(Command):
 
     def execute(self) -> CommandResult:
-        saver = create_saver(self.args, self.args.format)
         todo_list = TodoList(self.args.list_name)
+        saver = create_saver(self.args.list_name, self.args.format)
         saver.save_list(todo_list)
-        return CommandResult(LIST_READY)
+        return CommandResult(constants.LIST_READY)
 
 
 class ListCommand(Command):
 
     def execute(self) -> CommandResult:
-        loader = create_loader(args.list, self.args.format)
-        todo_list = TodoList(loader.load())
-        return todo_list.get_list()
+        loader = create_loader(self.args.list_name, self.args.format)
+        todo_list = TodoList(loader.load_list())
+        return CommandResult(todo_list.to_str())
 
 
-# чтобы добавить новую команду, нужно создать класс с методом def execute(self) -> CommandResult и добавить его вызов в create_command
+class AddCommand(Command):
+
+    def execute(self) -> CommandResult:
+        loader = create_loader(self.args.list_name, self.args.format)
+        todo_list = TodoList(loader.load_list())
+        todo_list.add_task(Task(self.args.add))
+        saver = create_saver(self.args.list_name, self.args.format)
+        saver.save_list(todo_list)
+        return CommandResult(constants.SAVED)
+
+
+class DeleteCommand(Command):
+
+    def execute(self) -> CommandResult:
+        loader = create_loader(self.args.list_name, self.args.format)
+        todo_list = TodoList(loader.load_list())
+        todo_list.del_task(self.args.num)
+        saver = create_saver(self.arg.list_name, self.args.format)
+        saver.save_list(todo_list)
+        return CommandResult(constants.TASK_DEL)
+
+
+class ChangeTaskCommand(Command):
+
+    def execute(self) -> CommandResult:
+        loader = create_loader(self.args.list_name, self.args.format)
+        todo_list = TodoList(loader.load_list())
+        todo_list.change_task(self.args.num, Task(self.args.task))
+        saver = create_saver(self.arg.list_name, self.args.format)
+        saver.save_list(todo_list)
+        return CommandResult(constants.SAVED)
+
+
+class DeleteListCommand(Command):
+
+    def execute(self) -> CommandResult:
+        file_path = os.path.join(os.getcwd(), self.args.delete_list)
+        try:
+            os.remove(file_path)
+            print(f"Файл удален успешно.")
+        except FileNotFoundError:
+            print(f"Файл не найден.")
+        except Exception as e:
+            print(f"Произошла ошибка при удалении файла: {e}")
+
+
 def create_command(args) -> Command:
-    if args.create:
+    if args.create_list:
         return CreateCommand(args)
     elif args.list:
         return ListCommand(args)
-    # и т.д. Здесь у нас всё же останется портянка if-ов, от них нам никуда не деться. Но она будет 1) изолирована в одной функции 2) очень простая, т.к. будет просто возвращать объект нужного класса
+    elif args.add:
+        return AddCommand(args)
+    elif args.delete:
+        return DeleteCommand(args)
+    elif args.change_task:
+        return ChangeTaskCommand(args)
+    elif args.delete_list:
+        return DeleteListCommand(args)
+    elif args.all_lists:
+        return AllListsCommand(args)
+    
 
 
 '''
- if args.create_list:
-        if args.json:
-            saver = JsonSaver(args.create_list)
-        else:
-            saver = CsvSaver(args.create_list)
-        saver.save_list(saver.create_new_list())
-    
-    while True:
-            task = input(constants.INPUT_TASK)
-            todo_list.append(task)
-            print(constants.Q_CONTINUE_INPUT)
-            if input().lower() == 'нет':
-                print(constants.LIST_READY)
-                break
-
-    elif args.list:
-    
-    
-    try:
-            with open(self.list_name, 'r', encoding='utf-8') as file:
-                todo_list = json.load(file)
-            return todo_list
-        except FileNotFoundError:
-            return ERROR_FileNotFound
-
-        if args.json:
-            loader = JsonLoader(args.list)
-        else:
-            loader = CsvLoader(args.list)
-        todo_list = TodoList(loader.load())
-        todo_list.get_list()
     # гет лист нужно удалить и в мейне печатать
     def get_list(self) -> None:
         if len(self.my_list) == 0:
@@ -100,10 +122,9 @@ def create_command(args) -> Command:
         else:
             loader = CsvLoader(args.change_list)
         todo_list = TodoList(loader.load())
-        if args.add:
-            todo_list.add_task(args.add)
+        except:
     
-    elif args.delete:
+        elif args.delete:
             try:
             del self.my_list[num - 1]
             print(constants.TASK_DEL)
@@ -113,11 +134,11 @@ def create_command(args) -> Command:
             raise WrongTaskNumberException
             todo_list.del_task(args.delete)
     
-    elif args.change_task:
+         elif args.change_task:
             new_task = Task(args.change_task, args.new_task)
             new_task.change_task(todo_list.todo_list())
-        save_list = JsonSaver(args.change_list)
-        save_list.save_list(todo_list.todo_list())
+            save_list = JsonSaver(args.change_list)
+            save_list.save_list(todo_list.todo_list())
     
     try:
             todo_list[self.num - 1] = self.task

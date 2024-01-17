@@ -13,5 +13,13 @@ SUCCESSFUL = 'Молодец! Ты выполнил все задачи)'
 NO_NUMBER = 'Такого номера нет в списке, выберите другой'
 
 
-class WrongTaskNumberException(Excetion):
+class ToDoListBaseException(Exception):
+    pass
+
+
+class WrongTaskNumberException(ToDoListBaseException):
+    pass
+
+
+class CannotSaveTodoList(ToDoListBaseException):
     pass
