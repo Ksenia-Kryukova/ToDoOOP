@@ -3,7 +3,7 @@ from .todo_lists import TodoList
 from .tasks import Task
 from .loaders import create_loader
 from .savers import create_saver
-from .constants import *
+from .constants import LIST_READY, SAVED, TASK_DEL
 import os
 
 
@@ -32,7 +32,7 @@ class CreateCommand(Command):
         todo_list = TodoList(self.args.list_name)
         saver = create_saver(self.args.list_name, self.args.format)
         saver.save_list(todo_list)
-        return CommandResult(constants.LIST_READY)
+        return CommandResult(LIST_READY)
 
 
 class ListCommand(Command):
@@ -51,7 +51,7 @@ class AddCommand(Command):
         todo_list.add_task(Task(self.args.add))
         saver = create_saver(self.args.list_name, self.args.format)
         saver.save_list(todo_list)
-        return CommandResult(constants.SAVED)
+        return CommandResult(SAVED)
 
 
 class DeleteCommand(Command):
@@ -62,7 +62,7 @@ class DeleteCommand(Command):
         todo_list.del_task(self.args.num)
         saver = create_saver(self.arg.list_name, self.args.format)
         saver.save_list(todo_list)
-        return CommandResult(constants.TASK_DEL)
+        return CommandResult(TASK_DEL)
 
 
 class ChangeTaskCommand(Command):
@@ -73,7 +73,7 @@ class ChangeTaskCommand(Command):
         todo_list.change_task(self.args.num, Task(self.args.task))
         saver = create_saver(self.args.list_name, self.args.format)
         saver.save_list(todo_list)
-        return CommandResult(constants.SAVED)
+        return CommandResult(SAVED)
 
 
 class DeleteListCommand(Command):
